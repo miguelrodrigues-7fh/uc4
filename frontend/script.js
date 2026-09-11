@@ -1,27 +1,36 @@
-        const msn = document.getElementById('sla');
-        const orkut = document.getElementById('giratina');
+const API_URL = 'http://localhost:3000/api/usuarios';
 
+const listaUsuarios = document.getElementById('listaUsuarios');
 
+const form = document.getElementById('formUsuario');
+const nomeInput = document.getElementById('nome');
+const emaiInput = document.getElementById('email');
+const botaoSalvar = document.getElementById('botaoSalvar');
 
-async function dataConsumo() {
+async function carregarUsuarios() {
         try { 
-            const resposta = await fetch('http://localhost:3000/api/mensagem');
-            if (!resposta.ok) { 
+            const resposta = await fetch(API_URL);
+            if (!resposta.ok) {
                 throw new Error(`Erro HTTP: ${resposta.status}`);
             }
            const data = await resposta.json();
-            //const titulo = document.getElementById('sla')
-           // titulo.innerHTML = data.mensagem;
-           // const descri = document.getAnimations('giratina');
-           // descri.innerHTML = data.description;
-            orkut.innerHTML = (data.sub);
-            msn.innerHTML = (data.mensagem);
+
+           listaUsuarios.innerHTML = "";
+
+           data.forEach(usuario => {
+            const linha = document.createElement("tr");
+
+            linha.innerHTML = `<td>${usuario.id}</td><td>${usuario.nome}</td><td>${usuario.email}</td>`;
+
+            listaUsuarios.appendChild(linha);
+           })
         }
             catch (erro) { 
                 console.error('Error: ', erro);
             }
     };
-     dataConsumo();
+    //Inicia já com nossa listagem
+    carregarUsuarios();
 
     
 

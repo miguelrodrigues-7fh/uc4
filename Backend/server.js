@@ -1,15 +1,53 @@
-const express = require('express');
-const cors = require('cors');
+const express = require('express'); // iniciamos o express
+const cors = require('cors'); // iniciamos o roteamento do cors
+const fs = require('fs'); // inserimos edição de arquiovs
 
-const app = express();
-const PORT = 3000;
+const app = express(); // definimos o app para utilizar o express
 
-app.use(cors());
-app.use(express.json());
+const PORT = 3000; // definimos a porta do back
+const ARQUIVO = "./dados.json"; // definimos o arquivo que os dados serão armazenados
 
-app.get('/api/mensagem', (req, res) => {
-    res.json({ mensagem: 'olá do backend com Express!', sub: 'meu segundo elemento' });
+app.use(cors()); // ativamos o app para usar o cors
+app.use(express.json()); // ativamos o app para utilizar estruturas json
+
+//Funções auxiliares
+function leituraUsuarios(){
+    const dados = fs.readFileSync(ARQUIVO, "utf-8")
+    return JSON.parse(dados);
+}
+function salvarUsuarios(usuarios){
+    fs.writeFileSync(ARQUIVO, JSON.stringify(usuarios, null, 2));
+
+}
+
+
+app.get('/api/usuarios', (req, res) => {
+    const usuarios = leituraUsuarios();
+    res.json(usuarios);
 });
+
+//POST:Criar
+
+app.post('api/usuarios', (req, res) => {
+    const {nome, email} = req.body;
+
+    if (!nome || !email) { //valida campo para não vir vazio
+        return res.status(400).json({
+            mensagem: "Nome e email são obrigatórios"
+        });
+    }
+
+    const usuarios = leituraUsuarios(); //fazemos a leitura dos usuários para a memória
+
+    const novoUsuario = {id:Date.now(), nome, email}; //fazemos os objetos do novo usuário
+
+    usuarios.push(novoUsuario); //adicionamos ao final da lista de usuários
+
+    salvarUsuarios(usuarios); //salvamos o usuário no arquivo
+
+    res.status(201).json(novoUsuario); //retorna sucesso ao criar novo usuário
+})
+
 app.listen(PORT, () => {
     console.log(`Servidor atualizado em http://localhost:${PORT}`);
 });
