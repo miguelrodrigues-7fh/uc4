@@ -29,8 +29,32 @@ async function carregarUsuarios() {
                 console.error('Error: ', erro);
             }
     };
+
+form.addEventListener("submit", async (event) => { //inicia a leitura do botão salvar
+    event.preventDefault(); // não deixa a página atualizar
+
+    const nome = nomeInput.value;
+    const email = emaiInput.value;
+
+    const usuario = {
+        nome,
+        email
+    };
+
+    await fetch(API_URL, {
+        method: "POST",
+        headers:{
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(usuario)
+
+    });
+        carregarUsuarios();
+
+});
+
+
     //Inicia já com nossa listagem
     carregarUsuarios();
 
-    
 

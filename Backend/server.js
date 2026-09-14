@@ -28,7 +28,7 @@ app.get('/api/usuarios', (req, res) => {
 
 //POST:Criar
 
-app.post('api/usuarios', (req, res) => {
+app.post('/api/usuarios', (req, res) => {
     const {nome, email} = req.body;
 
     if (!nome || !email) { //valida campo para não vir vazio
