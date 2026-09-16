@@ -20,10 +20,20 @@ function salvarUsuarios(usuarios){
 
 }
 
-
 app.get('/api/usuarios', (req, res) => {
     const usuarios = leituraUsuarios();
     res.json(usuarios);
+})
+app.get('/api/usuarios/:id', (req, res) => {
+    const usuarios = leituraUsuarios();
+    const id = Number (req.params.id);
+    const usuario = usuarios.find(usuario => usuario.id === id);
+    if (!usuario) {
+        return res.status(404).json({
+            mensagem: "Usuário não encontrado"
+        });
+    }
+    res.json(usuario);
 });
 
 //POST:Criar
@@ -47,6 +57,27 @@ app.post('/api/usuarios', (req, res) => {
 
     res.status(201).json(novoUsuario); //retorna sucesso ao criar novo usuário
 })
+
+//PUT: editar
+app.put('/api/usuarios/:id', (req, res) => {
+    const {nome, email} = req.body;// pega  a informação
+
+    const usuarios = leituraUsuarios();//
+
+    const id = Number(req.params.id);//estamos trnbalhando com parametros
+
+    const usuario = usuarios.find(usuario => usuario.id === id);
+    // find vai procurar na função se usuario em tipo e valor do id do passado pelo front
+    usuario.nome = nome;
+    usuario.email = email;
+
+    salvarUsuarios(usuarios);
+
+    res.json(usuario);
+}
+
+
+)
 
 app.listen(PORT, () => {
     console.log(`Servidor atualizado em http://localhost:${PORT}`);

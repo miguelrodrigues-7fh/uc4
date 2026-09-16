@@ -3,6 +3,7 @@ const API_URL = 'http://localhost:3000/api/usuarios';
 const listaUsuarios = document.getElementById('listaUsuarios');
 
 const form = document.getElementById('formUsuario');
+const usuarioIdInput =  document.getElementById('usuarioID');
 const nomeInput = document.getElementById('nome');
 const emaiInput = document.getElementById('email');
 const botaoSalvar = document.getElementById('botaoSalvar');
@@ -20,7 +21,14 @@ async function carregarUsuarios() {
            data.forEach(usuario => {
             const linha = document.createElement("tr");
 
-            linha.innerHTML = `<td>${usuario.id}</td><td>${usuario.nome}</td><td>${usuario.email}</td>`;
+            linha.innerHTML = `<td>${usuario.id}</td><td>${usuario.nome}</td><td>${usuario.email}</td>
+            <td>
+            <div class="options">
+            <button onclick="editarUsuario(${usuario.id})">Editar</button>
+            <button style="color:#fff; background-color:#ff6347" onclick="excluirUsuario(${usuario.id})">Excluir</button>
+            </div>
+            </td>`
+            ;
 
             listaUsuarios.appendChild(linha);
            })
@@ -33,15 +41,26 @@ async function carregarUsuarios() {
 form.addEventListener("submit", async (event) => { //inicia a leitura do botão salvar
     event.preventDefault(); // não deixa a página atualizar
 
-    const nome = nomeInput.value;
-    const email = emaiInput.value;
+    const nome = nomeInput.value; //leitura do valor em tela 
+    const email = emaiInput.value; //leitura valor em tela 
+    const id = usuarioIdInput.value; //leitura id
 
     const usuario = {
         nome,
         email
     };
 
-    await fetch(API_URL, {
+    if(id) {
+        await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers:{
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(usuario)
+
+    });
+
+    } else {await fetch(API_URL, {
         method: "POST",
         headers:{
             "Content-Type": "application/json"
@@ -49,9 +68,22 @@ form.addEventListener("submit", async (event) => { //inicia a leitura do botão 
         body: JSON.stringify(usuario)
 
     });
+
+    }
+
         carregarUsuarios();
 
 });
+
+async function editarUsuario(id) {
+    const resposta = await fetch(`${API_URL}/${id}`);
+    const usuario = await resposta.json();
+    usuarioIdInput.value = usuario.id;
+    nomeInput.value = usuario.nome;
+    emaiInput.value = usuario.email;
+    botaoSalvar.innerHTML = "Salvar alterações";
+
+}
 
 
     //Inicia já com nossa listagem
