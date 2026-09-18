@@ -23,10 +23,10 @@ function salvarUsuarios(usuarios){
 app.get('/api/usuarios', (req, res) => {
     const usuarios = leituraUsuarios();
     res.json(usuarios);
-})
+});
 app.get('/api/usuarios/:id', (req, res) => {
     const usuarios = leituraUsuarios();
-    const id = Number (req.params.id);
+    const id = Number(req.params.id);
     const usuario = usuarios.find(usuario => usuario.id === id);
     if (!usuario) {
         return res.status(404).json({
@@ -56,7 +56,7 @@ app.post('/api/usuarios', (req, res) => {
     salvarUsuarios(usuarios); //salvamos o usuário no arquivo
 
     res.status(201).json(novoUsuario); //retorna sucesso ao criar novo usuário
-})
+});
 
 //PUT: editar
 app.put('/api/usuarios/:id', (req, res) => {
@@ -78,6 +78,21 @@ app.put('/api/usuarios/:id', (req, res) => {
 
 
 )
+
+//DELETE - excluir
+app.delete("/api/usuarios/:id", (req, res) => {
+    let usuarios = leituraUsuarios();
+    const id = Number(req.params.id);
+    const usuarioExiste = usuarios.some(usuario => usuario.id === id);//verifica o id e retorna true ou false
+
+    if (!usuarioExiste){
+        return res.status(404).json({mensagem: 'Usuário não existe'});
+    }
+
+    usuarios = usuarios.filter(usuario => usuario.id !== id);//pega a lista de todos os usuários diferentes do selecionado
+    salvarUsuarios(usuarios);
+    res.status(204).send();
+});
 
 app.listen(PORT, () => {
     console.log(`Servidor atualizado em http://localhost:${PORT}`);

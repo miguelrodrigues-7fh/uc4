@@ -1,12 +1,14 @@
 const API_URL = 'http://localhost:3000/api/usuarios';
 
 const listaUsuarios = document.getElementById('listaUsuarios');
-
 const form = document.getElementById('formUsuario');
 const usuarioIdInput =  document.getElementById('usuarioID');
 const nomeInput = document.getElementById('nome');
 const emaiInput = document.getElementById('email');
 const botaoSalvar = document.getElementById('botaoSalvar');
+const mensagem = document.getElementById('mensagem');
+
+
 
 async function carregarUsuarios() {
         try { 
@@ -83,6 +85,24 @@ async function editarUsuario(id) {
     emaiInput.value = usuario.email;
     botaoSalvar.innerHTML = "Salvar alterações";
 
+}
+
+async function excluirUsuario(id) {
+    const confirmar = confirm("Deseja excluir mesmo este usuário?");
+    if (!confirmar){
+        return;
+    }
+    await fetch(`${API_URL}/${id}`, {
+        method: "DELETE"    
+        }); 
+        mostrarMensagem("Usuário excluido com sucesso!");
+        carregarUsuarios();     
+};
+
+
+function mostrarMensagem(texto){
+    mensagem.innerHTML = `${texto}`;
+    setTimeout(() => {mensagem.innerHTML = ""}, 3000);
 }
 
 
