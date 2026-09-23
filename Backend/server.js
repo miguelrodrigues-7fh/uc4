@@ -49,6 +49,15 @@ app.post('/api/usuarios', (req, res) => {
 
     const usuarios = leituraUsuarios(); //fazemos a leitura dos usuários para a memória
 
+
+    const emailNormalizado = email.trim().tolowerCase();
+
+    const emailExiste = usuarios.some(usuario => usuario.email.trim().tolowerCase({mensagem: "email já cadastrado"}));
+
+    if (emailExiste){
+        return res.status(409).json({mensagem: "email já cadastrado"});
+    }
+
     const novoUsuario = {id:Date.now(), nome, email}; //fazemos os objetos do novo usuário
 
     usuarios.push(novoUsuario); //adicionamos ao final da lista de usuários
@@ -64,7 +73,7 @@ app.put('/api/usuarios/:id', (req, res) => {
 
     const usuarios = leituraUsuarios();//
 
-    const id = Number(req.params.id);//estamos trnbalhando com parametros
+    const id = Number(req.params.id);//estamos trabalhando com parametros
 
     const usuario = usuarios.find(usuario => usuario.id === id);
     // find vai procurar na função se usuario em tipo e valor do id do passado pelo front
@@ -97,3 +106,4 @@ app.delete("/api/usuarios/:id", (req, res) => {
 app.listen(PORT, () => {
     console.log(`Servidor atualizado em http://localhost:${PORT}`);
 });
+
